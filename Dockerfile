@@ -7,8 +7,10 @@ RUN apk add --update --no-cache \
     && update-ms-fonts \
     && fc-cache -f
 
+COPY requirements.txt /
+
 RUN apk add --no-cache --virtual .build-deps gcc libc-dev make py-pip \
-    && pip install uvicorn fastapi pdfkit \
+    && pip install -r requirements.txt \
     && apk del .build-deps gcc libc-dev make
 
 # On alpine static compiled patched qt headless wkhtmltopdf (46.8 MB).
