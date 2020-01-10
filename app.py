@@ -1,4 +1,4 @@
-from pyppeteer.launcher import launch
+import pdfkit
 from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.responses import Response
@@ -15,15 +15,8 @@ class PostData(BaseModel):
 
 
 @app.post("/")
-async def index(data: PostData):
-    browser = await launch(
-        headless=True,
-        executablePath="/usr/bin/chromium-browser",
-        args=['--no-sandbox', '--disable-gpu']
-    )
-    page = await browser.newPage()
-    await page.goto(data.url)
-    pdf = await page.pdf({'path': 'page.pdf', 'format': 'A4'})
+def index(data: PostData):
+    pdf = pdfkit.from_url(data.url, False)
     filename = data.filename or "output"
     response = Response(
         pdf,
